@@ -1,8 +1,24 @@
 // Imports
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { addMovie, addToBasket, addToLikedMovies } from "../store";
 import { Card, CardContent, CardActions, Button, Typography } from "@material-ui/core";
 import { Favorite, FavoriteBorder, AddShoppingCart, RemoveShoppingCart } from "@material-ui/icons";
+
+// RootState (better practice)
+// For replacing in TS definition in Store useSelector
+// const movies = useSelector((store:{ movies:{ title:string; inBasket:boolean; liked:boolean; }[]; }) => { return store.movies });
+// const basket = useSelector((store:{ basket:string[]; }) => { return store.basket; });
+// const likedMovies = useSelector((store:{ likedMovies:string[]; }) => { return store.likedMovies; });
+interface RootState {
+	movies:{
+		title:string;
+		inBasket:boolean;
+		liked:boolean;
+	}[];
+	basket:string[];
+	likedMovies:string[];
+};
 
 // Component
 const Home = () => {
@@ -16,9 +32,9 @@ const Home = () => {
 	// We don't destructure movies because we access the variable directly
 	// from the store ;-)
 	// Here movies with TS, movies is an Array of object {}[] !
-	const movies = useSelector((store:{ movies:{ title:string; inBasket:boolean; liked:boolean; }[]; }) => { return store.movies });
-	const basket = useSelector((store:{ basket:string[]; }) => { return store.basket; });
-	const likedMovies = useSelector((store:{ likedMovies:string[]; }) => { return store.likedMovies; });
+	const movies = useSelector((store:RootState) => { return store.movies });
+	const basket = useSelector((store:RootState) => { return store.basket; });
+	const likedMovies = useSelector((store:RootState) => { return store.likedMovies; });
 
 	// Dispatch
 	const dispatch = useDispatch();
@@ -30,18 +46,18 @@ const Home = () => {
 			inBasket:false,
 			liked:false
 		};
-		dispatch({ type:'ADD_MOVIE', payload:newMovie });
+		dispatch(addMovie(newMovie));
 		setMovieTitle('');
 	};
 
 	// Add to basket
 	const handleAddToBasket = (title:string) => {
-		dispatch({ type:'ADD_TO_BASKET', payload:title });
+		dispatch(addToBasket(title));
 	};
 
 	// Like movie
 	const handleAddToLikedMovie = (title:string) => {
-		dispatch({ type:'ADD_TO_LIKED_MOVIE', payload:title });
+		dispatch(addToLikedMovies(title));
 	};
  
 	// Return
